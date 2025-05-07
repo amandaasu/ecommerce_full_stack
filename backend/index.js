@@ -1,15 +1,22 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGO_URI);
-const db = mongoose.connection;
-db.on("error", (error) => console.error(error));
-db.once("open", () => console.log("connected to db"));
 const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
-const ecommerceRouter = require("./routes/ecommerceRoute");
-app.use("/dev", ecommerceRouter);
 
-app.listen(3000, () => console.log("server started"));
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB Atlas"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Import Routes
+const ecommerceRouter = require("./routes/ecommerceRoute");
+app.use("/" + process.env.ENV || "/dev", ecommerceRouter);
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
