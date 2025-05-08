@@ -1,7 +1,20 @@
-export default function Home() {
+import HeroSection from "./components/HeroSection";
+
+import BrandsSection from "./components/BrandsSection";
+import DealsSection from "./components/DealsSection";
+import NewArrivalsSection from "./components/NewArrivalsSection";
+import NewsletterSection from "./components/NewsletterSection";
+import TestimonialsSection from "./components/TestimonialsSection";
+
+export default function HomePage() {
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <HeroSection />
+      <BrandsSection />
+      <DealsSection />
+      <NewArrivalsSection />
+      <TestimonialsSection />
+      <NewsletterSection />
     </>
   );
 }

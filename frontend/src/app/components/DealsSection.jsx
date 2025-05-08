@@ -1,0 +1,133 @@
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
+import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
+import Image from "next/image";
+
+const carouselItems = [
+  {
+    src: "/assets/top.jpg",
+    title: "Artificial Intelligence",
+    content: "You can do more with AI.",
+  },
+  {
+    src: "/assets/left.jpg",
+    title: "Productivity",
+    content: "Enhance your productivity.",
+  },
+  {
+    src: "/assets/right.jpg",
+    title: "Apple Vision Pro",
+    content: "Launching the new Apple Vision Pro.",
+  },
+  {
+    src: "/assets/bottom.jpg",
+    title: "iPhone 15 Pro Max",
+    content: "Maps for your iPhone 15 Pro Max.",
+  },
+];
+
+function Carousel() {
+  const carouselRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleScroll = (direction) => {
+    const width = carouselRef.current.clientWidth;
+    if (direction === "left") {
+      carouselRef.current.scrollBy({ left: -width, behavior: "smooth" });
+      setCurrentIndex(Math.max(currentIndex - 1, 0));
+    } else {
+      carouselRef.current.scrollBy({ left: width, behavior: "smooth" });
+      setCurrentIndex(Math.min(currentIndex + 1, carouselItems.length - 1));
+    }
+  };
+
+  return (
+    <div className="relative w-full max-w-7xl mx-auto overflow-hidden">
+      <div ref={carouselRef} className="flex gap-4 overflow-x-scroll scroll-smooth p-4" style={{ scrollbarWidth: "none" }}>
+        {carouselItems.map((item, index) => (
+          <motion.div key={index} className="min-w-[300px] md:min-w-[384px] rounded-lg overflow-hidden bg-gray-100 shadow-lg cursor-pointer" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
+            <div className="relative h-64 md:h-80">
+              <Image src={item.src} alt={item.title} layout="fill" className="object-cover" />
+            </div>
+            <div className="p-4">
+              <h3 className="font-semibold text-lg">{item.title}</h3>
+              <p className="text-gray-600">{item.content}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between  p-4">
+        <button onClick={() => handleScroll("left")} className="bg-gray-200 p-2 rounded-full hover:bg-gray-300">
+          <IconArrowNarrowLeft size={24} />
+        </button>
+        <button onClick={() => handleScroll("right")} className="bg-gray-200 p-2 rounded-full hover:bg-gray-300">
+          <IconArrowNarrowRight size={24} />
+        </button>
+      </div>
+    </div>
+  );
+}
+const DealsOfTheMonth = () => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const targetDate = new Date("2025-05-10T00:00:00").getTime();
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setTimeLeft({ days, hours, minutes, seconds });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-row gap-8 px-8 py-16">
+      {/* Left Section - 40% */}
+      <div className="w-2/5 flex flex-col justify-center space-y-4">
+        <h2 className="text-4xl font-semibold text-gray-800">Deals Of The Month</h2>
+        <p className="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque duis ultrices sollicitudin aliquam sem.</p>
+        <button className="bg-red-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-red-600 transition">Buy Now</button>
+
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-2">Hurry, Before It’s Too Late!</h3>
+          <div className="flex gap-4">
+            <div className="bg-white shadow-lg p-4 rounded-md text-center font-mono">
+              <span className="block text-2xl font-bold">{String(timeLeft.days).padStart(2, "0")}</span>
+              <span className="text-sm">Days</span>
+            </div>
+            <div className="bg-white shadow-lg p-4 rounded-md text-center font-mono">
+              <span className="block text-2xl font-bold">{String(timeLeft.hours).padStart(2, "0")}</span>
+              <span className="text-sm">Hr</span>
+            </div>
+            <div className="bg-white shadow-lg p-4 rounded-md text-center font-mono">
+              <span className="block text-2xl font-bold">{String(timeLeft.minutes).padStart(2, "0")}</span>
+              <span className="text-sm">Mins</span>
+            </div>
+            <div className="bg-white shadow-lg p-4 rounded-md text-center font-mono">
+              <span className="block text-2xl font-bold">{String(timeLeft.seconds).padStart(2, "0")}</span>
+              <span className="text-sm">Sec</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Carousel Section - 60% */}
+      <div className="w-3/5">
+        <div className="overflow-hidden rounded-lg  relative">
+          <div className="flex overflow-x-scroll space-x-4 scrollbar-hide">
+            <Carousel />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default DealsOfTheMonth;

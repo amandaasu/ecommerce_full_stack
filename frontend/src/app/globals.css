@@ -8,10 +8,13 @@ body {
 @theme {
   /* Configure your theme variables here */
   --font-display: "Poppins", "sans-serif";
-  --color-red: #d62828;
+  --primary-color: #d62828;
   --color-orange: #f77f00;
   --color-yellow: #fcbf49;
-  --color-blue: #003049;
+  --secondary-color: #003049;
   --spacing: 0.25rem;
   --color-white: #fff;
+}
+.appLogo {
+  fill: var(--primary-color);
 }
