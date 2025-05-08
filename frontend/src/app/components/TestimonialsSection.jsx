@@ -1,19 +1,182 @@
-export default function TestimonialsSection() {
+"use client";
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { motion, AnimatePresence } from "motion/react";
+import TestimonialPeople1 from "@/assets/TestimonialPeople1.jpeg";
+import TestimonialPeople2 from "@/assets/TestimonialPeople2.jpeg";
+import TestimonialPeople3 from "@/assets/TestimonialPeople3.jpeg";
+import TestimonialPeople4 from "@/assets/TestimonialPeople4.jpeg";
+import TestimonialPeople5 from "@/assets/TestimonialPeople5.jpeg";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+const images = [TestimonialPeople1, TestimonialPeople2, TestimonialPeople3, TestimonialPeople4, TestimonialPeople5];
+
+const Testimonials = ({ autoplay = false }) => {
+  const testimonials = [
+    {
+      id: 1,
+      name: "Sarah Chen",
+      designation: "Product Manager at TechFlow",
+      quote: "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
+    },
+    {
+      id: 2,
+      name: "Michael Rodriguez",
+      designation: "Developer at CodeVerse",
+      quote: "An absolute game-changer. I was impressed with the intuitive design and seamless user experience.",
+    },
+    {
+      id: 3,
+      name: "Emily Watson",
+      designation: "Freelancer",
+      quote: "Everything is just perfect! It has saved me so much time and effort. Highly recommended.",
+    },
+    {
+      id: 4,
+      name: "James Kim",
+      designation: "Marketer at BrandLift",
+      quote: "Excellent customer support and a fantastic product. Our entire team is loving it.",
+    },
+    {
+      id: 5,
+      name: "Lisa Thompson",
+      designation: "Entrepreneur",
+      quote: "I was skeptical at first, but this product blew me away. Absolutely incredible experience.",
+    },
+  ];
+
+  const [active, setActive] = useState(0);
+
+  const handleNext = () => {
+    setActive((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const handlePrev = () => {
+    setActive((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const isActive = (index) => {
+    return index === active;
+  };
+
+  useEffect(() => {
+    if (autoplay) {
+      const interval = setInterval(handleNext, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [autoplay]);
+
+  const randomRotateY = () => {
+    return Math.floor(Math.random() * 21) - 10;
+  };
+
   return (
-    <section className="py-12 bg-gray-100">
-      <div className="container mx-auto text-center">
-        <h2 className="text-2xl font-bold mb-6">This Is What Our Customers Say</h2>
-        <div className="flex gap-6 justify-center">
-          <div className="bg-white p-4 rounded-lg shadow-lg">
-            <p>"Great service and quality products!"</p>
-            <div className="mt-4 font-semibold">James K.</div>
+    <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12">
+      <h2 className="text-4xl font-bold text-center mb-2" style={{ color: "var(--primary-color)" }}>
+        This Is What Our Customers Say
+      </h2>
+      <p className="text-sm text-gray-500 text-center dark:text-neutral-500 mb-10">{"Real voices, real stories – hear what our customers love about us."}</p>
+
+      <div className="relative grid grid-cols-1 gap-20 md:grid-cols-2">
+        <div>
+          <div className="relative h-80 w-full">
+            <AnimatePresence>
+              {testimonials.map((_, index) => (
+                <motion.div
+                  key={index}
+                  initial={{
+                    opacity: 0,
+                    scale: 0.9,
+                    z: -100,
+                    rotate: randomRotateY(),
+                  }}
+                  animate={{
+                    opacity: isActive(index) ? 1 : 0.7,
+                    scale: isActive(index) ? 1 : 0.95,
+                    z: isActive(index) ? 0 : -100,
+                    rotate: isActive(index) ? 0 : randomRotateY(),
+                    zIndex: isActive(index) ? 40 : testimonials.length + 2 - index,
+                    y: isActive(index) ? [0, -80, 0] : 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.9,
+                    z: 100,
+                    rotate: randomRotateY(),
+                  }}
+                  transition={{
+                    duration: 0.4,
+                    ease: "easeInOut",
+                  }}
+                  className="absolute inset-0 origin-bottom"
+                >
+                  <Image src={images[index]} alt={testimonials[index].name} width={500} height={500} className="h-full w-full rounded-3xl object-cover object-center" />{" "}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-lg">
-            <p>"Amazing customer support and fast delivery!"</p>
-            <div className="mt-4 font-semibold">Sara W.</div>
+        </div>
+
+        <div className="flex flex-col justify-between py-4">
+          <motion.div
+            key={active}
+            initial={{
+              y: 20,
+              opacity: 0,
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
+            exit={{
+              y: -20,
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.2,
+              ease: "easeInOut",
+            }}
+          >
+            <h3 className="text-2xl font-bold text-black dark:text-white">{testimonials[active].name}</h3>
+            <p className="text-sm text-gray-500 dark:text-neutral-500">{testimonials[active].designation}</p>
+            <motion.p className="mt-8 text-lg text-gray-500 dark:text-neutral-300">
+              {testimonials[active].quote.split(" ").map((word, index) => (
+                <motion.span
+                  key={index}
+                  initial={{
+                    filter: "blur(10px)",
+                    opacity: 0,
+                    y: 5,
+                  }}
+                  animate={{
+                    filter: "blur(0px)",
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    duration: 0.2,
+                    ease: "easeInOut",
+                    delay: 0.02 * index,
+                  }}
+                  className="inline-block"
+                >
+                  {word}&nbsp;
+                </motion.span>
+              ))}
+            </motion.p>
+          </motion.div>
+
+          <div className="flex gap-4 pt-12 md:pt-0">
+            <button onClick={handlePrev} className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800">
+              <IconArrowLeft className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:rotate-12 dark:text-neutral-400" />
+            </button>
+            <button onClick={handleNext} className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800">
+              <IconArrowRight className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:-rotate-12 dark:text-neutral-400" />
+            </button>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default Testimonials;
