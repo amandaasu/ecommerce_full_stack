@@ -21,8 +21,9 @@ export default function BentoGrid() {
           <h1 className="text-5xl font-bold text-[var(--primary-color)]">ULTIMATE</h1>
           <h2 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-[#0D1F2D] to-[#0D1F2D]/50 mb-4">SALE</h2>
           <p className="text-lg font-semibold text-gray-800 mb-4">NEW COLLECTION</p>
+
           <Link href="/shop">
-            <button className="bg-[var(--primary-color)] text-white py-2 px-6 mt-4 rounded-lg shadow-lg hover:bg-[var(--primary-hover-color)]">SHOP NOW</button>
+            <button className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white">SHOP NOW</button>
           </Link>
         </div>
 

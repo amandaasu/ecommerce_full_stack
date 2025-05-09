@@ -4,34 +4,30 @@ import { motion } from "motion/react";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-
-const carouselItems = [
-  {
-    src: "/assets/top.jpg",
-    title: "Artificial Intelligence",
-    content: "You can do more with AI.",
-  },
-  {
-    src: "/assets/left.jpg",
-    title: "Productivity",
-    content: "Enhance your productivity.",
-  },
-  {
-    src: "/assets/right.jpg",
-    title: "Apple Vision Pro",
-    content: "Launching the new Apple Vision Pro.",
-  },
-  {
-    src: "/assets/bottom.jpg",
-    title: "iPhone 15 Pro Max",
-    content: "Maps for your iPhone 15 Pro Max.",
-  },
-];
+import { fetchDeals } from "../services/productService";
+import { ProductImage } from "./Items";
 
 function Carousel() {
   const carouselRef = useRef(null);
+  const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [error, setError] = useState(false);
+  const [deals, setDeals] = useState([]);
+  useEffect(() => {
+    const getDeals = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchDeals();
+        setDeals(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    getDeals();
+  }, [setDeals, setLoading, setError]);
   const handleScroll = (direction) => {
     const width = carouselRef.current.clientWidth;
     if (direction === "left") {
@@ -39,17 +35,17 @@ function Carousel() {
       setCurrentIndex(Math.max(currentIndex - 1, 0));
     } else {
       carouselRef.current.scrollBy({ left: width, behavior: "smooth" });
-      setCurrentIndex(Math.min(currentIndex + 1, carouselItems.length - 1));
+      setCurrentIndex(Math.min(currentIndex + 1, deals.length - 1));
     }
   };
 
   return (
     <div className="relative w-full max-w-7xl mx-auto overflow-hidden">
       <div ref={carouselRef} className="flex gap-4 overflow-x-scroll scroll-smooth p-4" style={{ scrollbarWidth: "none" }}>
-        {carouselItems.map((item, index) => (
+        {deals.map((item, index) => (
           <motion.div key={index} className="min-w-[300px] md:min-w-[384px] rounded-lg overflow-hidden bg-gray-100 shadow-lg cursor-pointer" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
             <div className="relative h-64 md:h-80">
-              <Image src={item.src} alt={item.title} layout="fill" className="object-cover" />
+              <ProductImage src={item.imageSrc} alt={item.title} />
             </div>
             <div className="p-4">
               <h3 className="font-semibold text-lg">{item.title}</h3>
@@ -94,9 +90,9 @@ const DealsOfTheMonth = () => {
       {/* Left Section - 40% */}
       <div className="w-2/5 flex flex-col justify-center space-y-4">
         <h2 className="text-4xl font-semibold text-gray-800">Deals Of The Month</h2>
-        <p className="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque duis ultrices sollicitudin aliquam sem.</p>
+        <p className="text-gray-600">Unmissable Deals on Trendy Accessories and Apparel! Grab Your Favorites Before They’re Gone!</p>
         <Link href="/shop">
-          <button className="bg-red-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-red-600 transition">Buy Now</button>
+          <button className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white">Buy Now</button>
         </Link>
         <div className="mt-6">
           <h3 className="text-lg font-medium mb-2">Hurry, Before It’s Too Late!</h3>

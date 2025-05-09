@@ -76,21 +76,21 @@ const CartPage = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={() => handleQuantityChange(item.variantSKU, "REMOVE")} className="border px-2 py-1">
+                <button onClick={() => handleQuantityChange(item.variantSKU, "REMOVE")} className="rounded-full px-3 py-1 border border-gray-300 rounded">
                   -
                 </button>
                 <span className="w-8 text-center">{item.quantity}</span>
-                <button onClick={() => handleQuantityChange(item.variantSKU, "ADD")} className="border px-2 py-1">
+                <button onClick={() => handleQuantityChange(item.variantSKU, "ADD")} className="rounded-full px-3 py-1 border border-gray-300 rounded">
                   +
                 </button>
               </div>
-              <p className="text-lg font-semibold w-20 text-right">${(item.variantPrice * item.quantity).toFixed(2)}</p>
+              <p className="text-lg font-semibold w-20 text-right">${(item.variantPrice * item.quantity)?.toFixed(2)}</p>
             </div>
           ))}
 
           <div className="flex justify-between items-center mt-8">
             <h2 className="text-xl font-bold">Total Items: {totalItems}</h2>
-            <button className="bg-black text-white px-6 py-2 rounded">Checkout</button>
+            <button className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white">Checkout</button>
           </div>
         </div>
       )}

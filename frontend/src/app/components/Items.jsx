@@ -6,9 +6,15 @@ import Image from "next/image";
 import BrokenImage from "@/assets/broken-image.png";
 import { addToCartAPI, updateCartItemAPI } from "../services/cartService";
 import { useCartStore } from "../store/cartStore";
-import CartIcon from "@/assets/cart.svg";
+import CartIcon from "@/assets/cart-dark.png";
 
-export function CardContainer({ items }) {
+export function CardContainer({
+  items,
+  loadMore = false,
+  onLoadMore = function () {
+    return;
+  },
+}) {
   const [active, setActive] = useState(null);
   const id = useId();
   const ref = useRef(null);
@@ -73,29 +79,39 @@ export function CardContainer({ items }) {
               <ProductImage src={product.imageSrc} alt={product.title} hovered={hoveredCard === product._id} />
             </div>
             <div className="text-lg font-semibold text-gray-800">{product.title}</div>
-            <div className="text-sm text-gray-500">${product.variantPrice.toFixed(2)}</div>
+            <div className="text-sm text-gray-500">${product.variantPrice?.toFixed(2) || 0}</div>
 
             {currentQuantity === 0 ? (
-              <button className="border border-primary text-primary px-4 py-1 rounded mt-2" onClick={() => setQuantity((prev) => ({ ...prev, [productId]: 1 }))}>
+              // className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white"
+              <button className="px-6 py-2 rounded-full border border-primary text-primary px-4 py-1 rounded mt-2" onClick={() => setQuantity((prev) => ({ ...prev, [productId]: 1 }))}>
                 Add to Cart
               </button>
             ) : (
               <div className="mt-2 flex gap-4">
                 <div className="flex items-center gap-2">
-                  <button className="px-2 py-1 border border-gray-300 rounded" onClick={() => handleQuantityChange(productId, "REMOVE")} disabled={currentQuantity === 0}>
+                  <button className="rounded-full px-3 py-1 border border-gray-300 rounded" onClick={() => handleQuantityChange(productId, "REMOVE")} disabled={currentQuantity === 0}>
                     -
                   </button>
                   <span>{currentQuantity}</span>
-                  <button className="px-2 py-1 border border-gray-300 rounded" onClick={() => handleQuantityChange(productId, "ADD")}>
+                  <button className="rounded-full px-3 py-1 border border-gray-300 rounded" onClick={() => handleQuantityChange(productId, "ADD")}>
                     +
                   </button>
                 </div>
-                <Image onClick={() => handleAddToCart(product)} src={CartIcon} alt="Cart" width={24} height={24} />
+                <div className="flex justify-center items-center gap-2 lg:gap-4 rounded-full bg-[var(--primary-color)] text-white cursor-pointer p-2 lg:p-3" onClick={() => handleAddToCart(product)}>
+                  {/* Cart Icon - Always Visible */}
+                  <Image src={CartIcon} alt="Cart" width={24} height={24} className="text-white" />
+
+                  {/* Button - Visible only on LG and larger screens */}
+                  <button src={CartIcon} className="hidden lg:block">
+                    Buy Now
+                  </button>
+                </div>
               </div>
             )}
           </div>
         );
       })}
+      {loadMore && <LoadMore onLoadMore={onLoadMore} />}
     </ul>
   );
 }
@@ -118,3 +134,15 @@ export const ProductImage = ({ src, alt, hovered, ...options }) => {
     />
   );
 };
+function LoadMore({ onLoadMore }) {
+  return (
+    <div
+      className="flex justify-center items-center mt-8"
+      onClick={() => {
+        onLoadMore();
+      }}
+    >
+      <button className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white">{"Load More"}</button>
+    </div>
+  );
+}

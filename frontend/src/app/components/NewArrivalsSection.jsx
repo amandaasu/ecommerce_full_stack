@@ -1,110 +1,78 @@
 "use client";
 
 import Image from "next/image";
-import React, { createContext, useState, useContext, useRef } from "react";
-import { CardContainer } from "./Items";
+import React, { useState, useEffect } from "react";
+import { CardContainer, ProductImage } from "./Items";
+import { fetchByCategory } from "../services/productService";
 
-const products = [
-  {
-    _id: "681baf03d98d640b00e029b4",
-    handle: "zebra-print-bikini",
-    title: "Zebra Print Bikini",
-    body: "I hear that zebra print swimwear is rather 'in' at the moment, and has been seen on everyone from Cheryl Cole to...actually, she's the only one who I had heard of (What on earth is a Kim Kardashian?? Answers in a postcard please).\n\nClassic black and white zebra print bikini. Just make sure you wear suntan lotion ot you'll be black and white and red all over!! Hahahaha... (I'll get my coat)\n\nOne Size fits all.",
-    vendor: "Docblack",
-    type: "Bikinis",
-    tags: "bikini, black, white, zebra",
-    option1Name: "Title",
-    option1Value: "Size Free",
-    option2Name: "",
-    option2Value: "",
-    option3Name: "",
-    option3Value: "",
-    variantSKU: "DB341-ZEB-0",
-    variantGrams: 0,
-    variantInventoryTracker: "shopify",
-    variantInventoryQty: 100,
-    variantInventoryPolicy: "deny",
-    variantFulfillmentService: "manual",
-    variantPrice: 14.99,
-    variantCompareAtPrice: "",
-    imageSrc: "http://cdn.shopify.com/s/files/1/0028/4062/products/600_DB341_Zebra_Print_Bikini2.jpg?1257429506",
-    __v: 0,
-  },
-  {
-    _id: "681baf04d98d640b00e02a1a",
-    handle: "pink-zebra-print-bikini",
-    title: "Pink Zebra Print Bikini",
-    body: "This a shade of pink is just on the right side of acid (...pink, I mean, not the drug. That's just a silly thing to do) Your mates will definately not lose you if you rock up to the beach in this bad boy. And if you happen to actually BE a boy, it becomes doubly true, although I guess in that situation the colour of the bikini becomes some what of a moot point. Either way, this is very cool beach type wear!\n\nOne Size fits all.",
-    vendor: "Docblack",
-    type: "Bikinis",
-    tags: "bikini, pink, tribal, zebra",
-    option1Name: "Title",
-    option1Value: "Size Free",
-    option2Name: "",
-    option2Value: "",
-    option3Name: "",
-    option3Value: "",
-    variantSKU: "DB339-PNK-0",
-    variantGrams: 0,
-    variantInventoryTracker: "shopify",
-    variantInventoryQty: 100,
-    variantInventoryPolicy: "deny",
-    variantFulfillmentService: "manual",
-    variantPrice: 14.99,
-    variantCompareAtPrice: "",
-    imageSrc: "http://cdn.shopify.com/s/files/1/0028/4062/products/600_DB339_Pink_Zebra_Bikini2.jpg?1257429506",
-    __v: 0,
-  },
-  {
-    _id: "681baf04d98d640b00e02a22",
-    handle: "purple-zebra-print-bikini",
-    title: "Purple Zebra Print Bikini",
-    body: "If zebras were this colour in the wild...well, the giraffes would be pretty jealous thats for sure! Bright and vibrant bikini, which will set off a tan perfectly.\n\nOne Size fits all.",
-    vendor: "Docblack",
-    type: "Bikinis",
-    tags: "bikini, purple, tribal, zebra",
-    option1Name: "Title",
-    option1Value: "Default",
-    option2Name: "",
-    option2Value: "",
-    option3Name: "",
-    option3Value: "",
-    variantSKU: "DB340-PRL-0",
-    variantGrams: 0,
-    variantInventoryTracker: "shopify",
-    variantInventoryQty: 99,
-    variantInventoryPolicy: "deny",
-    variantFulfillmentService: "manual",
-    variantPrice: 14.99,
-    variantCompareAtPrice: "",
-    imageSrc: "http://cdn.shopify.com/s/files/1/0028/4062/products/600_db340_purple_zebra_bikini2.jpg?1257429506",
-    __v: 0,
-  },
-];
-
-const categories = ["All", "Women's Fashion", "Accessories", "T-Shirts"];
+const categories = ["All", "Children's T-Shirts", "Skirts", "Dresses", "Hoodies"];
 
 export default function NewArrivals() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const filteredProducts = activeCategory === "All" ? products : products.filter((product) => product.category === activeCategory);
-
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const getFilteredProducts = async (page, category) => {
+    try {
+      setLoading(true);
+      const data = await fetchByCategory(page, category);
+      if (page > 1) {
+        setProducts([...products, ...data.items] || []);
+      } else {
+        setProducts(data.items || []);
+      }
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    getFilteredProducts(1, activeCategory);
+  }, [activeCategory]);
+  const onLoadMore = () => {
+    getFilteredProducts(page + 1, activeCategory);
+    setPage((prev) => {
+      return prev + 1;
+    });
+  };
+  const onChangeTab = (category) => {
+    setActiveCategory(category);
+    setPage(1);
+    getFilteredProducts(1, category);
+  };
   return (
     <div className="px-8 py-16">
       <h2 className="text-3xl font-bold text-center mb-8">New Arrivals</h2>
 
       <div className="flex justify-center gap-4 mb-8">
         {categories.map((category) => (
-          <button key={category} onClick={() => setActiveCategory(category)} className={`px-6 py-2 rounded-full ${activeCategory === category ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"}`}>
+          <button
+            key={category}
+            onClick={() => {
+              onChangeTab(category);
+            }}
+            className={`px-6 py-2 rounded-full ${activeCategory === category ? "bg-[var(--primary-color)] text-white" : "bg-gray-200 text-gray-600"}`}
+          >
             {category}
           </button>
         ))}
       </div>
-      <CardContainer items={products} />
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> */}
-      {/* {filteredProducts.map((product) => (
-          <Card key={product.id} product={product} />
-        ))} */}
-      {/* </div> */}
+
+      {loading ? (
+        <div className="flex justify-center items-center py-16">
+          <span className="text-lg text-gray-600">Loading...</span>
+        </div>
+      ) : error ? (
+        <div className="text-center text-red-500">{error}</div>
+      ) : (
+        <>
+          <CardContainer items={products} loadMore={page < totalPages} onLoadMore={() => onLoadMore()} />
+        </>
+      )}
     </div>
   );
 }
