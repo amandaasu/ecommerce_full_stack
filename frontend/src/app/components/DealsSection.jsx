@@ -5,7 +5,7 @@ import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchDeals } from "../services/productService";
-import { ProductImage } from "./Items";
+import { ProductImage } from "./Products";
 
 function Carousel() {
   const carouselRef = useRef(null);

@@ -7,6 +7,7 @@ import BrokenImage from "@/assets/broken-image.png";
 import { addToCartAPI, updateCartItemAPI } from "../services/cartService";
 import { useCartStore } from "../store/cartStore";
 import CartIcon from "@/assets/cart-dark.png";
+import Link from "next/link";
 
 export function CardContainer({
   items,
@@ -136,13 +137,18 @@ export const ProductImage = ({ src, alt, hovered, ...options }) => {
 };
 function LoadMore({ onLoadMore }) {
   return (
-    <div
-      className="flex justify-center items-center mt-8"
-      onClick={() => {
-        onLoadMore();
-      }}
-    >
-      <button className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white">{"Load More"}</button>
+    <div className="flex flex-col gap-4 justify-center items-center mt-8">
+      <button
+        className="w-48 px-6 py-2 rounded-full bg-[var(--primary-color)] text-white"
+        onClick={() => {
+          onLoadMore();
+        }}
+      >
+        Load More
+      </button>
+      <Link href="/shop">
+        <button className="w-48 px-6 py-2 rounded-full border border-[var(--secondary-color)] text-[var(--secondary-color)] hover:bg-[var(--secondary-color)] hover:text-white transition">Show All</button>
+      </Link>
     </div>
   );
 }

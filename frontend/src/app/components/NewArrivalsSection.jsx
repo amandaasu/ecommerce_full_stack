@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import { CardContainer, ProductImage } from "./Items";
+import { CardContainer, ProductImage } from "./Products";
 import { fetchByCategory } from "../services/productService";
 
 const categories = ["All", "Children's T-Shirts", "Skirts", "Dresses", "Hoodies"];

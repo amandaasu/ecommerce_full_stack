@@ -23,7 +23,7 @@ export default function BentoGrid() {
           <p className="text-lg font-semibold text-gray-800 mb-4">NEW COLLECTION</p>
 
           <Link href="/shop">
-            <button className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white">SHOP NOW</button>
+            <button className="px-6 py-2 rounded-full bg-[var(--primary-color)] text-white">Shop Now</button>
           </Link>
         </div>
 
