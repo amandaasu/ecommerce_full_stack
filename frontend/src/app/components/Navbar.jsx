@@ -57,14 +57,16 @@ export default function Navbar() {
           <Image src={UserIcon} alt="User" width={24} height={24} className="cursor-pointer" />
 
           {/* Cart Icon with Badge */}
-          <div className="relative cursor-pointer">
-            <Image src={CartIcon} alt="Cart" width={24} height={24} />
-            {totalItems > 0 && (
-              <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-white text-xs flex items-center justify-center rounded-full px-2 py-1" style={{ background: "var(--primary-color)", minWidth: "24px" }}>
-                {totalItems}
-              </span>
-            )}
-          </div>
+          <Link href="/cart">
+            <div className="relative cursor-pointer">
+              <Image src={CartIcon} alt="Cart" width={24} height={24} />
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-white text-xs flex items-center justify-center rounded-full px-2 py-1" style={{ background: "var(--primary-color)", minWidth: "24px" }}>
+                  {totalItems}
+                </span>
+              )}
+            </div>
+          </Link>
         </div>
       </div>
     </nav>

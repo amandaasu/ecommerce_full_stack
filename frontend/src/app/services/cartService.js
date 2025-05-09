@@ -4,7 +4,6 @@ const API_BASE_URL = process.env.NEXT_API_BASE_URL + "/cart";
 
 // Fetch all cart items
 export const fetchCartItems = async () => {
-  debugger;
   try {
     const response = await axios.get(`${API_BASE_URL}`);
     return response.data;
@@ -15,11 +14,16 @@ export const fetchCartItems = async () => {
 };
 
 // Add item to cart
-export const addToCartAPI = async ({ productId, quantity }) => {
+export const addToCartAPI = async (product, quantity) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/add`, {
-      productId,
-      quantity,
+    const response = await axios.post(`${API_BASE_URL}`, {
+      item: {
+        imageSrc: product.imageSrc,
+        title: product.title,
+        variantSKU: product.variantSKU,
+        variantPrice: product.variantPrice,
+        quantity: quantity,
+      },
     });
     return response.data;
   } catch (error) {
@@ -31,9 +35,8 @@ export const addToCartAPI = async ({ productId, quantity }) => {
 // Update cart item quantity
 export const updateCartItemAPI = async (productId, quantity) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/update`, {
-      productId,
-      quantity,
+    const response = await axios.patch(`${API_BASE_URL}/${productId}`, {
+      quantity: quantity,
     });
     return response.data;
   } catch (error) {
@@ -45,7 +48,7 @@ export const updateCartItemAPI = async (productId, quantity) => {
 // Remove item from cart
 export const removeFromCartAPI = async (productId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/remove/${productId}`);
+    const response = await axios.delete(`${API_BASE_URL}/${productId}`);
     return response.data;
   } catch (error) {
     console.error("Error removing item from cart:", error);

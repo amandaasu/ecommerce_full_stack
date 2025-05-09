@@ -28,7 +28,8 @@ router.get("/search", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Error searching items." });
   }
-}); // POST /api/cart - Add item to cart
+});
+// POST /api/cart - Add item to cart
 router.post("/cart", (req, res) => {
   const { item } = req.body;
 
@@ -36,13 +37,15 @@ router.post("/cart", (req, res) => {
     const existingItem = cart.find((cartItem) => cartItem.variantSKU === item.variantSKU);
 
     if (existingItem) {
-      existingItem.quantity += 1;
+      existingItem.quantity += item?.quantity || 1;
       existingItem.totalPrice = existingItem.quantity * existingItem.variantPrice;
     } else {
-      cart.push({ ...item, quantity: 1, totalPrice: item.variantPrice });
+      cart.push({ ...item, quantity: item?.quantity || 1, totalPrice: item.variantPrice });
     }
 
-    res.json({ message: "Item added to cart.", cart });
+    const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
+
+    res.json({ message: "Item added to cart.", cart, totalItems });
   } else {
     res.status(400).json({ message: "Invalid item data. 'variantSKU' is required." });
   }
@@ -51,14 +54,18 @@ router.post("/cart", (req, res) => {
 // GET /api/cart - Get cart items
 router.get("/cart", (req, res) => {
   const totalAmount = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-  res.json({ cart, totalAmount });
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+  res.json({ cart, totalAmount, totalItems });
 });
 
 // DELETE /api/cart/:sku - Remove item from cart
 router.delete("/cart/:sku", (req, res) => {
   const { sku } = req.params;
   cart = cart.filter((item) => item.variantSKU !== sku);
-  res.json({ message: "Item removed from cart.", cart });
+
+  const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
+
+  res.json({ message: "Item removed from cart.", cart, totalItems });
 });
 
 // PATCH /api/cart/:sku - Update quantity of an item in the cart
@@ -71,7 +78,10 @@ router.patch("/cart/:sku", (req, res) => {
   if (item) {
     item.quantity = quantity;
     item.totalPrice = item.quantity * item.variantPrice;
-    res.json({ message: "Cart updated.", cart });
+
+    const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
+
+    res.json({ message: "Cart updated.", cart, totalItems });
   } else {
     res.status(404).json({ message: "Item not found in cart." });
   }
