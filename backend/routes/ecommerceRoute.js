@@ -3,18 +3,43 @@ const router = express.Router();
 const Item = require("../models/Item");
 
 let cart = [];
-//localhost:3000/dev/items?page=1&type=Accessories
-router.get("/items", async (req, res) => {
+
+// EndPoints Examole:
+// /fetchItems
+// /fetchItems?page=2
+// /fetchItems?page=1&type=Accessories
+// /fetchItems?page=2&type=Bikinis
+// /fetchItems?page=1&search=Zebra&type=Bikinis
+// /fetchItems?page=1&search=Zebra
+// /fetchItems?page=2&type=Tops&search=Pink
+// /fetchItems?type=Hoodies
+router.get("/fetchItems", async (req, res) => {
   try {
-    const { page, type } = req.query;
+    const { page, type, search } = req.query;
     const limit = 25;
+    const query = {};
 
-    const query = type ? { type } : {};
+    // Apply type filter
+    if (type) {
+      query.type = type;
+    }
 
+    // Apply search filter
+    if (search) {
+      query.$or = [{ variantSKU: { $regex: search, $options: "i" } }, { title: { $regex: search, $options: "i" } }];
+    }
+    const totalItems = await Item.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // If page is not provided, return all items without pagination
     if (!page) {
-      // Return all items if no page is specified
       const items = await Item.find(query);
-      return res.json(items);
+      return res.json({
+        items,
+        currentPage: 1,
+        totalPages: 1,
+        totalItems,
+      });
     }
 
     const pageNumber = parseInt(page, 10);
@@ -24,19 +49,17 @@ router.get("/items", async (req, res) => {
 
     const skip = (pageNumber - 1) * limit;
     const paginatedItems = await Item.find(query).skip(skip).limit(limit);
-    const totalItems = await Item.countDocuments(query);
 
     res.json({
       items: paginatedItems,
       currentPage: pageNumber,
-      totalPages: Math.ceil(totalItems / limit),
+      totalPages,
       totalItems,
     });
   } catch (err) {
     res.status(500).json({ message: "Error fetching items." });
   }
 });
-// GET /dev/deals - Fetch first 6 accessories as deals
 router.get("/deals", async (req, res) => {
   try {
     const deals = await Item.find({ type: "Accessories" }).limit(6);
@@ -45,18 +68,6 @@ router.get("/deals", async (req, res) => {
     res.status(500).json({ message: "Error fetching deals." });
   }
 });
-router.get("/search", async (req, res) => {
-  const { query } = req.query;
-  try {
-    const items = await Item.find({
-      $or: [{ variantSKU: { $regex: query, $options: "i" } }, { title: { $regex: query, $options: "i" } }],
-    });
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ message: "Error searching items." });
-  }
-});
-
 // POST /api/cart - Add item to cart
 router.post("/cart", (req, res) => {
   const { item } = req.body;
