@@ -77,9 +77,9 @@ export function CardContainer({
             onMouseLeave={() => setHoveredCard(null)}
           >
             <div className="overflow-hidden rounded-lg mb-4 h-[300px] relative z-10">
-              <ProductImage src={product.imageSrc} alt={product.title} hovered={hoveredCard === product._id} />
+              <ProductImage src={product.imageSrc} alt={product.title || "Product Title"} hovered={hoveredCard === product._id} />
             </div>
-            <div className="text-lg font-semibold text-gray-800">{product.title}</div>
+            <div className="text-lg font-semibold text-gray-800">{product.title || "Unknown"}</div>
             <div className="text-sm text-gray-500">${product.variantPrice?.toFixed(2) || 0}</div>
 
             {currentQuantity === 0 ? (

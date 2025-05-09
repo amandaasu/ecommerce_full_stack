@@ -4,6 +4,7 @@ import { useCartStore } from "../store/cartStore";
 import { fetchCartItems, removeFromCartAPI, updateCartItemAPI } from "../services/cartService";
 import Image from "next/image";
 import BrokenImage from "@/assets/broken-image.png";
+import { ProductImage } from "../components/Products";
 
 const CartPage = () => {
   const { cart, totalItems, setCart, setLoading, setError } = useCartStore();
@@ -66,7 +67,9 @@ const CartPage = () => {
           {cart.map((item) => (
             <div key={item.variantSKU} className="flex items-center justify-between gap-6 border-b pb-4 mb-4">
               <div className="flex items-center gap-4 flex-1">
-                <Image src={item.imageSrc || BrokenImage} alt={item.title} width={80} height={80} className="rounded" />
+                {/* <Image src={item.imageSrc || BrokenImage} alt={item.title} width={80} height={80} className="rounded" /> */}
+                <ProductImage src={item.imageSrc} alt={item.title || "Product Image"} width={80} height={80} className="rounded" />
+
                 <div className="flex-1">
                   <h2 className="text-lg font-semibold">{item.title}</h2>
                   <p className="text-gray-500">SKU: {item.variantSKU}</p>

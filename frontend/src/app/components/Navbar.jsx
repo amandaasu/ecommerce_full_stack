@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IconSearch } from "@tabler/icons-react";
@@ -16,9 +17,16 @@ export default function Navbar() {
   const { cart, totalItems, setCart, setLoading, setError } = useCartStore();
   const { setSearch } = useProductsStore();
   const [searchTerm, setLocalSearchTerm] = useState("");
+  const router = useRouter();
+  const currentPath = usePathname();
+
   const handleSearch = () => {
     setSearch(searchTerm);
-    console.log(searchTerm);
+
+    // Navigate to shop if not already there
+    if (currentPath !== "/shop") {
+      router.push("/shop");
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -26,6 +34,7 @@ export default function Navbar() {
       handleSearch();
     }
   };
+
   const getCartItems = async () => {
     setLoading(true);
     setError(null);

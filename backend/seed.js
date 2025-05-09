@@ -40,7 +40,7 @@ mongoose
 
         // Handle missing title
         if (!title) {
-          title = "Unknown";
+          title = "";
           changes.push(`Title missing, set as "Unknown" for SKU: ${sku}`);
         }
 
