@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React, { createContext, useState, useContext, useRef } from "react";
-import { CardContainer } from "./Items";
+import { CardContainer } from "../components/Items";
 
 const products = [
   {
@@ -85,26 +85,10 @@ const products = [
 const categories = ["All", "Women's Fashion", "Accessories", "T-Shirts"];
 
 export default function NewArrivals() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const filteredProducts = activeCategory === "All" ? products : products.filter((product) => product.category === activeCategory);
-
   return (
-    <div className="px-8 py-16">
-      <h2 className="text-3xl font-bold text-center mb-8">New Arrivals</h2>
-
-      <div className="flex justify-center gap-4 mb-8">
-        {categories.map((category) => (
-          <button key={category} onClick={() => setActiveCategory(category)} className={`px-6 py-2 rounded-full ${activeCategory === category ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"}`}>
-            {category}
-          </button>
-        ))}
-      </div>
+    <div className="px-28 py-16">
+      <h2 className="text-3xl font-bold  mb-8">All Products</h2>
       <CardContainer items={products} />
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> */}
-      {/* {filteredProducts.map((product) => (
-          <Card key={product.id} product={product} />
-        ))} */}
-      {/* </div> */}
     </div>
   );
 }

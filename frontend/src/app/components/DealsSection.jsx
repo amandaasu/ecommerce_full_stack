@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const carouselItems = [
   {
@@ -94,8 +95,9 @@ const DealsOfTheMonth = () => {
       <div className="w-2/5 flex flex-col justify-center space-y-4">
         <h2 className="text-4xl font-semibold text-gray-800">Deals Of The Month</h2>
         <p className="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque duis ultrices sollicitudin aliquam sem.</p>
-        <button className="bg-red-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-red-600 transition">Buy Now</button>
-
+        <Link href="/shop">
+          <button className="bg-red-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-red-600 transition">Buy Now</button>
+        </Link>
         <div className="mt-6">
           <h3 className="text-lg font-medium mb-2">Hurry, Before It’s Too Late!</h3>
           <div className="flex gap-4">
