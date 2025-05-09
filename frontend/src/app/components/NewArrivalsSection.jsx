@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { CardContainer, ProductImage } from "./Products";
-import { fetchByCategory } from "../services/productService";
+import { fetchAllProducts, fetchByCategory } from "../services/productService";
 
 const categories = ["All", "Children's T-Shirts", "Skirts", "Dresses", "Hoodies"];
 
@@ -17,7 +17,7 @@ export default function NewArrivals() {
   const getFilteredProducts = async (page, category) => {
     try {
       setLoading(true);
-      const data = await fetchByCategory(page, category);
+      const data = await fetchAllProducts({ page: page, search: null, type: category === "All" ? null : category });
       if (page > 1) {
         setProducts([...products, ...data.items] || []);
       } else {
@@ -30,6 +30,7 @@ export default function NewArrivals() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     getFilteredProducts(1, activeCategory);
   }, [activeCategory]);

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export const useProductsStore = create((set) => ({
-  search: [],
+  search: "",
   totalItems: 0,
   loading: false,
   error: null,

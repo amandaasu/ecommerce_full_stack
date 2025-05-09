@@ -19,44 +19,61 @@ router.get("/fetchItems", async (req, res) => {
     const limit = 25;
     const query = {};
 
-    // Apply type filter
-    if (type) {
-      query.type = type;
-    }
-
-    // Apply search filter
+    if (type) query.type = type;
     if (search) {
       query.$or = [{ variantSKU: { $regex: search, $options: "i" } }, { title: { $regex: search, $options: "i" } }];
     }
-    const totalItems = await Item.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
 
-    // If page is not provided, return all items without pagination
+    const aggregationPipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          hasImage: { $cond: [{ $ne: ["$imageSrc", ""] }, 1, 0] },
+          hasTitle: { $cond: [{ $ne: ["$title", ""] }, 1, 0] },
+          hasSKU: { $cond: [{ $ne: ["$variantSKU", "TEMP"] }, 1, 0] },
+        },
+      },
+      {
+        $sort: {
+          hasImage: -1,
+          hasTitle: -1,
+          hasSKU: -1,
+        },
+      },
+    ];
+
+    // If `page` is not provided, return all items without pagination
     if (!page) {
-      const items = await Item.find(query);
+      const items = await Item.aggregate(aggregationPipeline);
       return res.json({
         items,
         currentPage: 1,
         totalPages: 1,
-        totalItems,
+        totalItems: items.length,
       });
     }
 
+    // Paginated response if `page` is present
     const pageNumber = parseInt(page, 10);
     if (isNaN(pageNumber) || pageNumber < 1) {
       return res.status(400).json({ message: "Invalid page number" });
     }
 
     const skip = (pageNumber - 1) * limit;
-    const paginatedItems = await Item.find(query).skip(skip).limit(limit);
 
-    res.json({
+    const paginatedItems = await Item.aggregate([...aggregationPipeline, { $skip: skip }, { $limit: limit }]);
+
+    const totalItems = await Item.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return res.json({
       items: paginatedItems,
       currentPage: pageNumber,
       totalPages,
       totalItems,
     });
   } catch (err) {
+    console.error("Error fetching items:", err.message);
     res.status(500).json({ message: "Error fetching items." });
   }
 });

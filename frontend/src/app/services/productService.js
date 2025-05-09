@@ -1,8 +1,38 @@
 import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_API_BASE_URL;
+// Fetch all products with search
+// /fetchItems
+// /fetchItems?page=2
+// /fetchItems?page=1&type=Accessories
+// /fetchItems?page=2&type=Bikinis
+// /fetchItems?page=1&search=Zebra&type=Bikinis
+// /fetchItems?page=1&search=Zebra
+// /fetchItems?page=2&type=Tops&search=Pink
+// /fetchItems?type=Hoodies
+export const fetchAllProducts = async (filters) => {
+  try {
+    const { page, type, search } = filters;
+    let url = `${API_BASE_URL}/fetchItems`;
 
-// Fetch all products
+    const params = new URLSearchParams();
+
+    if (page) params.append("page", page);
+    if (type) params.append("type", type);
+    if (search) params.append("search", search);
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
 export const fetchProducts = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/items`);

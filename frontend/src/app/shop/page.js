@@ -3,18 +3,22 @@
 import Image from "next/image";
 import React, { createContext, useState, useContext, useRef, useEffect } from "react";
 import { CardContainer } from "../components/Products";
-import { fetchProducts } from "../services/productService";
-import { useProductsStore } from "../store/searchStore";
+import { fetchAllProducts, fetchProducts } from "../services/productService";
+import { useProductsStore } from "../store/productStore";
 
 export default function Shop() {
   const [products, setProducts] = useState([]);
-  const { loading, setLoading, setError } = useProductsStore();
+  const { search, loading, setLoading, setError } = useProductsStore();
 
   const getProducts = async () => {
     try {
       setLoading(true);
-      const data = await fetchProducts();
-      setProducts(data || []);
+      const data = await fetchAllProducts({
+        page: null,
+        search: search || null,
+        type: null,
+      });
+      setProducts(data.items || []);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -23,7 +27,8 @@ export default function Shop() {
   };
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [search]);
+
   return (
     <div className="px-28 py-16">
       <h2 className="text-3xl font-bold  mb-8">All Products</h2>
