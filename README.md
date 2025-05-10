@@ -4,6 +4,7 @@
 
 - [Project Statement](#project-statement)
 - [Solution Overview](#solution-overview)
+- [UX](#UX-and-Branding)
 - [Backend Strategy and Architecture](#backend-strategy-and-architecture)
 - [Frontend Strategy and Architecture](#frontend-strategy-and-architecture)
 - [How to install](#setup-guide)
@@ -35,7 +36,7 @@ The E-commerce Full-Stack project is a comprehensive web application designed to
 
 # UX and Branding
 
-[View UX and Branding Image](./UX.png)
+<img src="./UX.png" alt="UX" style="width:100%;"/>
 
 # Backend Strategy and Architecture
 
