@@ -1,3 +1,5 @@
+# Live URL - [Click here](https://ecommercefrontend-amandaasu-arpitas-projects-7f37dd14.vercel.app)
+
 ## Project: Single-Page Ordering Website
 
 ### Objective:
@@ -191,7 +193,7 @@ vercel --prod
 
 ### 🚀 Live url will be available in the console
 
----
+## This link will be private, to make it public [follow the link](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/sharable-links)
 
 ## Summary:
 
