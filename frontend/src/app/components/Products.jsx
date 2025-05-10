@@ -3,7 +3,8 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import BrokenImage from "@/assets/broken-image.png";
+// import BrokenImage from "@/assets/broken-image.png";
+import BrokenImage from "@/assets/item_not_found.gif";
 import { addToCartAPI, updateCartItemAPI } from "../services/cartService";
 import { useCartStore } from "../store/cartStore";
 import CartIcon from "@/assets/cart-dark.png";
@@ -76,7 +77,7 @@ export function CardContainer({
             onMouseEnter={() => setHoveredCard(product._id)}
             onMouseLeave={() => setHoveredCard(null)}
           >
-            <div className="overflow-hidden rounded-lg mb-4 h-[300px] relative z-10">
+            <div className="overflow-hidden flex justify-center items-center rounded-lg mb-4 h-[300px] relative z-10">
               <ProductImage src={product.imageSrc} alt={product.title || "Product Title"} hovered={hoveredCard === product._id} />
             </div>
             <div className="text-lg font-semibold text-gray-800">{product.title || "Unknown"}</div>
@@ -116,23 +117,25 @@ export function CardContainer({
     </ul>
   );
 }
-
-export const ProductImage = ({ src, alt, hovered, ...options }) => {
+export const ProductImage = ({ src, alt, hovered, width = 420, height = 400, brokenWidth = 128, brokenHeight = 128, ...options }) => {
   const [imageSrc, setImageSrc] = useState(src);
+  const [isBroken, setIsBroken] = useState(false);
 
   return (
-    <Image
-      src={imageSrc}
-      alt={alt}
-      width={320}
-      height={400}
-      className="w-full h-full object-cover transition-transform duration-300"
-      style={{
-        transform: hovered ? "scale(1.05)" : "scale(1)",
-      }}
-      onError={() => setImageSrc(BrokenImage)}
-      {...options}
-    />
+    <div className={`flex justify-center items-center ${isBroken ? `w-[${brokenWidth}px] h-[${brokenHeight}px]` : `w-[${width}px] h-[${height}px]`}`}>
+      <Image
+        src={imageSrc}
+        alt={alt}
+        width={isBroken ? brokenWidth : width}
+        height={isBroken ? brokenHeight : height}
+        className={`object-cover transition-transform duration-300 ${hovered ? "scale-105" : "scale-100"}`}
+        onError={() => {
+          setImageSrc(BrokenImage);
+          setIsBroken(true);
+        }}
+        {...options}
+      />
+    </div>
   );
 };
 function LoadMore({ onLoadMore }) {

@@ -1,10 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IconSearch } from "@tabler/icons-react";
-// Import icons from assets
 import HeartIcon from "@/assets/heart.svg";
 import UserIcon from "@/assets/user.svg";
 import CartIcon from "@/assets/cart.svg";
@@ -16,17 +15,28 @@ import { useProductsStore } from "../store/productStore";
 export default function Navbar() {
   const { cart, totalItems, setCart, setLoading, setError } = useCartStore();
   const { setSearch } = useProductsStore();
-  const [searchTerm, setLocalSearchTerm] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const currentPath = usePathname();
 
-  const handleSearch = () => {
-    setSearch(searchTerm);
+  // Get the search term from URL
+  const querySearch = searchParams.get("search") || "";
+  const [searchTerm, setSearchTerm] = useState(querySearch);
 
-    // Navigate to shop if not already there
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (searchTerm.trim()) params.set("search", searchTerm);
+
+    // Update the URL with the search parameter
+    const newUrl = `/shop?${params.toString()}`;
     if (currentPath !== "/shop") {
-      router.push("/shop");
+      router.push(newUrl);
+    } else {
+      router.replace(newUrl);
     }
+
+    // Update the global search state
+    setSearch(searchTerm);
   };
 
   const handleKeyPress = (e) => {
@@ -54,6 +64,11 @@ export default function Navbar() {
     getCartItems();
   }, []);
 
+  // Update the search term when the URL changes
+  useEffect(() => {
+    setSearchTerm(querySearch);
+  }, [querySearch]);
+
   return (
     <nav className="bg-white p-4 shadow-md fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
@@ -66,7 +81,7 @@ export default function Navbar() {
 
         {/* Search Bar */}
         <div className="relative w-3/5 min-w-[200px]">
-          <input type="text" placeholder="Search" onKeyDown={handleKeyPress} value={searchTerm} onChange={(e) => setLocalSearchTerm(e.target.value)} className="w-full py-2 px-4 rounded-full bg-red-50 text-neutral-600 pr-10 outline-none focus:ring-2 focus:ring-red-400 transition" />
+          <input type="text" placeholder="Search" onKeyDown={handleKeyPress} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full py-2 px-4 rounded-full bg-red-50 text-neutral-600 pr-10 outline-none focus:ring-2 focus:ring-red-400 transition" />
           <span className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-neutral-600 hover:text-red-400 transition" onClick={handleSearch}>
             <IconSearch size={20} />
           </span>

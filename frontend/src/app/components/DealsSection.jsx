@@ -44,7 +44,7 @@ function Carousel() {
       <div ref={carouselRef} className="flex gap-4 overflow-x-scroll scroll-smooth p-4" style={{ scrollbarWidth: "none" }}>
         {deals.map((item, index) => (
           <motion.div key={index} className="min-w-[300px] md:min-w-[384px] rounded-lg overflow-hidden bg-gray-100 shadow-lg cursor-pointer" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
-            <div className="relative h-64 md:h-80">
+            <div className="bg-white flex justify-center items-center relative h-64 md:h-80">
               <ProductImage src={item.imageSrc} alt={item.title} />
             </div>
             <div className="p-4">

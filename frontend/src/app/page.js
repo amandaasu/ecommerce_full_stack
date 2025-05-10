@@ -18,9 +18,6 @@ export default function HomePage() {
       <Features />
       <TestimonialsSection />
       <NewsletterSection />
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <ChatBot />
-      </div>
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ChatWindow from "./ChatWindow";
 import { IconX } from "@tabler/icons-react";
 import Image from "next/image";
@@ -19,6 +19,9 @@ function ChatBot() {
       items: [],
     },
   ]);
+
+  const chatRef = useRef(null);
+
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
@@ -36,8 +39,21 @@ function ChatBot() {
     setIsOpen(!isOpen);
   };
 
+  const handleClickOutside = (event) => {
+    if (chatRef.current && !chatRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end" ref={chatRef}>
       <button
         onClick={toggleChat}
         className={`relative flex items-center justify-center w-14 h-14 rounded-full shadow-lg focus:outline-none transition-all duration-300 ${isOpen ? "bg-[var(--primary-color)] text-white" : "bg-white text-[var(--primary-color)] border border-[var(--primary-color)]"} ${isButtonAnimating ? "animate-bounce" : ""} ${isOpen ? "scale-95" : "scale-100 hover:scale-105"}`}

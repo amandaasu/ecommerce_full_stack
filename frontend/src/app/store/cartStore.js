@@ -5,8 +5,8 @@ export const useCartStore = create((set) => ({
   totalItems: 0,
   loading: false,
   error: null,
-
-  setCart: (cartItems) => set({ cart: cartItems.cart, totalItems: cartItems.totalItems || 0 }),
+  totalAmount: 0,
+  setCart: (cartItems) => set({ cart: cartItems.cart, totalAmount: cartItems.totalAmount || 0, totalItems: cartItems.totalItems || 0 }),
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
 }));

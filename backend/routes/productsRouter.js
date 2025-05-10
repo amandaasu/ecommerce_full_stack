@@ -155,8 +155,9 @@ router.post("/cart", (req, res) => {
     }
 
     const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
+    const totalAmount = cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0);
 
-    res.json({ message: "Item added to cart.", cart, totalItems });
+    res.json({ message: "Item added to cart.", cart, totalItems, totalAmount });
   } else {
     res.status(400).json({ message: "Invalid item data. 'variantSKU' is required." });
   }
@@ -175,8 +176,9 @@ router.delete("/cart/:sku", (req, res) => {
   cart = cart.filter((item) => item.variantSKU !== sku);
 
   const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
+  const totalAmount = cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0);
 
-  res.json({ message: "Item removed from cart.", cart, totalItems });
+  res.json({ message: "Item removed from cart.", cart, totalItems, totalAmount });
 });
 
 // PATCH /api/cart/:sku - Update quantity of an item in the cart
@@ -191,10 +193,15 @@ router.patch("/cart/:sku", (req, res) => {
     item.totalPrice = item.quantity * item.variantPrice;
 
     const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
+    const totalAmount = cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0);
 
-    res.json({ message: "Cart updated.", cart, totalItems });
+    res.json({ message: "Cart updated.", cart, totalItems, totalAmount });
   } else {
     res.status(404).json({ message: "Item not found in cart." });
   }
+});
+router.get("/checkout", (req, res) => {
+  cart = [];
+  res.json({ message: "Cart cleared successfully.", cart, totalItems: 0, totalAmount: 0 });
 });
 module.exports = router;
