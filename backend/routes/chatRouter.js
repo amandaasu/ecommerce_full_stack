@@ -32,7 +32,8 @@ const handleWebSocket = (server) => {
             currentPage: 1,
             totalPages: 1,
             totalItems: 0,
-            items: [{ message: "Hello! How can I assist you today?" }],
+            message: "Hello! How can I assist you today?",
+            items: [],
           };
           ws.send(JSON.stringify(msg));
           return;
@@ -43,7 +44,8 @@ const handleWebSocket = (server) => {
             currentPage: 1,
             totalPages: 1,
             totalItems: 0,
-            items: [{ message: "Goodbye! Feel free to ask anytime." }],
+            message: "Goodbye! Feel free to ask anytime.",
+            items: [],
           };
           ws.send(JSON.stringify(msg));
           return;
@@ -84,7 +86,8 @@ const handleWebSocket = (server) => {
             currentPage: 1,
             totalPages: 1,
             totalItems: 0,
-            items: [{ message: "Sorry, I didn't understand that. Try searching by SKU, type, or price." }],
+            message: "Sorry, I didn't understand that. Try searching by SKU, type, or price.",
+            items: [],
           };
           ws.send(JSON.stringify(msg));
           return;
@@ -100,7 +103,15 @@ const handleWebSocket = (server) => {
         const res = {
           json: (data) => {
             console.log(params);
-            ws.send(JSON.stringify(data));
+            const finalRes = {
+              currentPage: data.currentPage || 1,
+              totalPages: data.totalPages || 1,
+              totalItems: data.totalItems || 0,
+              message: "Here are some suggestions.",
+              items: data.items || [],
+              params: params,
+            };
+            ws.send(JSON.stringify(finalRes));
           },
           status: (statusCode) => {
             console.log(`Status: ${statusCode}`);
