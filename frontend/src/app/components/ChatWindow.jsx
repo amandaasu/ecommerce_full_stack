@@ -7,7 +7,9 @@ import { ProductImage } from "./Products";
 import Logo from "@/assets/MNlogo_small.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-const WS_BASE_URL = process.env.NEXT_WS_BASE_URL;
+
+const WS_BASE_URL = process.env.NEXT_API_BASE_URL.replace("https://", "wss://").replace("http://", "ws://");
+
 const suggestions = ["Show me items under $30", "List all skirts", "Search for SKU DB319-RED-0", "Show me hoodies above $20"];
 
 function ChatWindow({ messages, setMessages }) {

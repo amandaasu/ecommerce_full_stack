@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
-import Image from "next/image";
 import Link from "next/link";
 import { fetchDeals } from "../services/productService";
 import { ProductImage } from "./Products";
