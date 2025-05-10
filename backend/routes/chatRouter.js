@@ -58,7 +58,7 @@ const handleWebSocket = (server) => {
         }
 
         if (intent === "TYPE_SEARCH") {
-          const typeMatch = parsedMessage.match(/(t-shirt|skirt|hoodie|top|accessories)/);
+          const typeMatch = parsedMessage.match(/(T-shirts|Children's T-Shirts|Accessories|Bikinis|Dresses|Hoodies|Footwear|Tops|Skirts|Unknown)/i);
           if (typeMatch) params.type = typeMatch[1];
         }
 
@@ -76,6 +76,10 @@ const handleWebSocket = (server) => {
         }
         if (intent === "DISPLAY_ALL") {
           params = {}; // No filters
+        }
+        // // If no valid product-related intent, default to keyword search
+        if (Object.keys(params).length === 0) {
+          params.search = parsedMessage;
         }
 
         console.log("Constructed Params:", params);
@@ -107,7 +111,7 @@ const handleWebSocket = (server) => {
               currentPage: data.currentPage || 1,
               totalPages: data.totalPages || 1,
               totalItems: data.totalItems || 0,
-              message: "Here are some suggestions.",
+              message: data.items.length > 0 ? "Here are some suggestions." : "No items found. Try again.",
               items: data.items || [],
               params: params,
             };

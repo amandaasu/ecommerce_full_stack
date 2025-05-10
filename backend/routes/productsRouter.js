@@ -82,7 +82,35 @@ router.get("/fetchItems", async (req, res) => {
   try {
     const { page, type, search, sku, price } = req.query;
     const limit = 25;
-    const query = buildQuery({ type, search, sku, price });
+    const pageNumber = parseInt(page, 10) || 1;
+    const skip = (pageNumber - 1) * limit;
+
+    let query = {};
+
+    // Apply Type Filter
+    if (type) {
+      query.type = { $regex: new RegExp(type, "i") };
+    }
+
+    // Apply SKU Filter
+    if (sku) {
+      query.variantSKU = { $regex: new RegExp(sku, "i") };
+    }
+
+    // Apply Price Filter
+    if (price) {
+      const operator = price.startsWith("<") ? "$lt" : "$gt";
+      const priceValue = parseFloat(price.replace(/[<>]/, ""));
+      query.variantPrice = { [operator]: priceValue };
+    }
+
+    // Enhanced Fuzzy Search
+    if (search) {
+      const searchTerms = search.split(" ").map((term) => new RegExp(term, "i"));
+      query.$or = [{ variantSKU: { $all: searchTerms } }, { title: { $all: searchTerms } }];
+    }
+
+    console.log("Constructed Query:", JSON.stringify(query));
 
     const aggregationPipeline = [
       { $match: query },
@@ -102,6 +130,7 @@ router.get("/fetchItems", async (req, res) => {
       },
     ];
 
+    // Fetch all data without pagination if page is not specified
     if (!page) {
       const items = await Item.aggregate(aggregationPipeline);
       return res.json({
@@ -112,11 +141,8 @@ router.get("/fetchItems", async (req, res) => {
       });
     }
 
-    const pageNumber = parseInt(page, 10) || 1;
-    const skip = (pageNumber - 1) * limit;
-
+    // Paginated response
     const paginatedItems = await Item.aggregate([...aggregationPipeline, { $skip: skip }, { $limit: limit }]);
-
     const totalItems = await Item.countDocuments(query);
     const totalPages = Math.ceil(totalItems / limit);
 
@@ -149,13 +175,15 @@ router.post("/cart", (req, res) => {
 
     if (existingItem) {
       existingItem.quantity += item?.quantity || 1;
-      existingItem.totalPrice = existingItem.quantity * existingItem.variantPrice;
+      existingItem.totalPrice = parseFloat((existingItem.quantity * existingItem.variantPrice).toFixed(2));
     } else {
-      cart.push({ ...item, quantity: item?.quantity || 1, totalPrice: item.variantPrice });
+      const quantity = item?.quantity || 1;
+      const totalPrice = parseFloat((quantity * item.variantPrice).toFixed(2));
+      cart.push({ ...item, quantity, totalPrice });
     }
 
     const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-    const totalAmount = cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0);
+    const totalAmount = parseFloat(cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0).toFixed(2));
 
     res.json({ message: "Item added to cart.", cart, totalItems, totalAmount });
   } else {
@@ -165,8 +193,9 @@ router.post("/cart", (req, res) => {
 
 // GET /api/cart - Get cart items
 router.get("/cart", (req, res) => {
-  const totalAmount = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+  const totalAmount = parseFloat(cart.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2));
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+
   res.json({ cart, totalAmount, totalItems });
 });
 
@@ -176,7 +205,7 @@ router.delete("/cart/:sku", (req, res) => {
   cart = cart.filter((item) => item.variantSKU !== sku);
 
   const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-  const totalAmount = cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0);
+  const totalAmount = parseFloat(cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0).toFixed(2));
 
   res.json({ message: "Item removed from cart.", cart, totalItems, totalAmount });
 });
@@ -190,18 +219,21 @@ router.patch("/cart/:sku", (req, res) => {
 
   if (item) {
     item.quantity = quantity;
-    item.totalPrice = item.quantity * item.variantPrice;
+    item.totalPrice = parseFloat((item.quantity * item.variantPrice).toFixed(2));
 
     const totalItems = cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-    const totalAmount = cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0);
+    const totalAmount = parseFloat(cart.reduce((sum, cartItem) => sum + cartItem.totalPrice, 0).toFixed(2));
 
     res.json({ message: "Cart updated.", cart, totalItems, totalAmount });
   } else {
     res.status(404).json({ message: "Item not found in cart." });
   }
 });
+
+// GET /checkout - Clear the cart
 router.get("/checkout", (req, res) => {
   cart = [];
   res.json({ message: "Cart cleared successfully.", cart, totalItems: 0, totalAmount: 0 });
 });
+
 module.exports = router;

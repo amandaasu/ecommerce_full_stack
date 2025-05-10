@@ -13,7 +13,7 @@ const API_BASE_URL = process.env.NEXT_API_BASE_URL + "/" + process.env.NEXT_ENV;
 // /fetchItems?type=Hoodies
 export const fetchAllProducts = async (filters) => {
   try {
-    const { page, type, search } = filters;
+    const { page, type, search, price } = filters;
     let url = `${API_BASE_URL}/fetchItems`;
 
     const params = new URLSearchParams();
@@ -21,6 +21,7 @@ export const fetchAllProducts = async (filters) => {
     if (page) params.append("page", page);
     if (type) params.append("type", type);
     if (search) params.append("search", search);
+    if (price) params.append("price", price);
 
     if (params.toString()) {
       url += `?${params.toString()}`;

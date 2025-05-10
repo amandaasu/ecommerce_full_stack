@@ -33,6 +33,10 @@ Develop a single-page ordering website where users can:
 
 The E-commerce Full-Stack project is a comprehensive web application designed to simulate a fully functional online store. The architecture is divided into two main segments: the backend (Node.js, Express, MongoDB) and the frontend (React, Next.js). The project leverages MongoDB Atlas for data storage, Render for backend deployment, and Vercel for frontend deployment.
 
+# UX and Branding
+
+[View UX and Branding Image](./UX.png)
+
 # Backend Strategy and Architecture
 
 - Architecture Overview
@@ -221,7 +225,7 @@ The frontend application is built using React.js and Next.js, designed to provid
   - Simplifies global state management across components.
   - Directly integrates with async functions (e.g., fetching data, managing cart state).
 
-## Router-Enabled App
+### Router-Enabled App
 
 - Next.js Router: The application leverages Next.js dynamic routing for cleaner and more efficient navigation.
 - Dynamic Routes:
@@ -232,7 +236,7 @@ The frontend application is built using React.js and Next.js, designed to provid
   - Filters like search, type, and price are managed via query parameters for seamless navigation and data persistence.
   - Example: /shop?search=TS01&type=T-shirts&price=<30
 
-## Loading States and Error Handling
+### Loading States and Error Handling
 
 - Global Loading State: A centralized loading state is implemented in the store to handle asynchronous data fetching.
 - Loading Indicators:
@@ -243,7 +247,7 @@ The frontend application is built using React.js and Next.js, designed to provid
   - Chat queries are validated, and the user is notified of invalid queries.
   - Product listings show fallback content when data is missing or when the server is unreachable.
 
-## Handling Products with Missing Images
+### Handling Products with Missing Images
 
 - Default Image Strategy:
   - Products without images are assigned a default placeholder image to maintain visual consistency.
@@ -252,7 +256,7 @@ The frontend application is built using React.js and Next.js, designed to provid
   - When the imageSrc is empty or invalid, the fallback image is applied dynamically.
   - This approach ensures that product cards maintain a consistent layout even with missing data.
 
-## Chat Interface and Intent Recognition
+### Chat Interface and Intent Recognition
 
 - WebSocket Integration:
   - The chat interface is implemented using WebSocket for real-time communication.
@@ -261,7 +265,7 @@ The frontend application is built using React.js and Next.js, designed to provid
   - The chat interface parses queries into structured objects using pre-defined intents.
   - If the query is invalid or incomplete, the user is notified with relevant feedback.
 
-## Reusability and Modular Design
+### Reusability and Modular Design
 
 - Component Reusability: This approach eliminated redundant query logic and promoted code consistency across pages and chat.
 
