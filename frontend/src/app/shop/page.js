@@ -1,25 +1,34 @@
 "use client";
 
+import React, { Suspense, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { CardContainer } from "../components/Products";
 import { fetchAllProducts } from "../services/productService";
 import { useProductsStore } from "../store/productStore";
 import { IconX } from "@tabler/icons-react";
-import NoItemsGif from "@/assets/no_items.gif"; // Ensure this GIF is in the assets folder
+import NoItemsGif from "@/assets/no_items.gif";
 
+// Main component that gets exported - wrapped in Suspense
 export default function Shop() {
+  return (
+    <Suspense fallback={<div className="px-28 py-16">Loading shop page...</div>}>
+      <ShopContent />
+    </Suspense>
+  );
+}
+
+// Content component that uses client-side hooks
+function ShopContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [products, setProducts] = useState([]);
   const { loading, setLoading, setError } = useProductsStore();
   const [totalItems, setTotalItems] = useState(0);
-  const getProducts = async () => {
-    console.log(searchParams);
-    // const { search, loading, setLoading, setError } = useProductsStore();
 
+  const getProducts = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -38,12 +47,11 @@ export default function Shop() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams, setLoading, setError]);
 
   useEffect(() => {
     getProducts();
-  }, [searchParams]);
-
+  }, [searchParams, getProducts]);
   const handleFilterChange = (filterType, value) => {
     const newParams = new URLSearchParams(searchParams.toString());
 
@@ -92,24 +100,9 @@ export default function Shop() {
             <option value="<30">Below $30</option>
             <option value=">30">Above $30</option>
           </select>
-
-          {/* <input type="text" placeholder="Search SKU or Title" className="px-3 py-2 border rounded" value={searchParams.get("search") || ""} onChange={(e) => handleFilterChange("search", e.target.value)} /> */}
         </div>
       </div>
 
-      {/* Active Filters Section
-      {activeFilters.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {activeFilters.map((filter) => (
-            <div key={filter.key} className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-sm font-medium text-gray-600">
-              {filter.label}: {filter.value}
-              <button onClick={() => removeFilter(filter.key)} className="ml-2 text-gray-500 hover:text-gray-700" aria-label={`Remove ${filter.label} filter`}>
-                <IconX size={16} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )} */}
       {loading ? (
         <div className="flex py-16">
           <span className="text-lg text-gray-600">Loading...</span>
