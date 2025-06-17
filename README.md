@@ -1,5 +1,3 @@
-# Live URL - [Click here](https://ecommercefrontend-amandaasu-arpitas-projects-7f37dd14.vercel.app)
-
 ## Table of Contents
 
 - [Project Statement](#project-statement)
@@ -27,8 +25,7 @@ Develop a single-page ordering website where users can:
 - Frontend: Next.js
 - Backend: Node.js (Express)
 - Database: MongoDB (NoSQL)
-- Testing (Bonus): Jest
-- Hosting: Deploy on Vercel, Netlify, or AWS
+- Hosting: Vercel
 
 # Solution Overview
 
